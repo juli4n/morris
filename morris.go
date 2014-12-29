@@ -13,20 +13,24 @@ type Counter byte
 
 // Increments the counter by one.
 func (c *Counter) increment() {
-	r := uint64(random.Int63())
+	r := rand64()
 	mask := (uint64(1<<(*c%64)) - 1)
 
 	incr := (mask&r == mask)
 
 	repeat := int(*c / 64)
 	for i := 0; incr && i < repeat; i++ {
-		r = uint64(random.Int63())
+		r = rand64()
 		incr = incr && (r == ^uint64(0))
 	}
 
 	if incr {
 		*c++
 	}
+}
+
+func rand64() uint64 {
+	return uint64(random.Uint32())<<32 + uint64(random.Uint32())
 }
 
 // Returns log_2(counter).
